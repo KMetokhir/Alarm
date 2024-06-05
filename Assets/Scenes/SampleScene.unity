@@ -1155,7 +1155,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fd77adf4ab0db44ca1406d326fb9823, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _volumeChangeRate: 0.1
+  _volumeChangeRate: 0.2
+  _waitingInterval: 1
 --- !u!1 &8509153341447521622
 GameObject:
   m_ObjectHideFlags: 0

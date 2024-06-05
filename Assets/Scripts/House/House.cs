@@ -12,7 +12,7 @@ public class House : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.GetComponent<Player>())
+        if (collision.TryGetComponent(out Player _))
         {
             _alarm.On();
         }
@@ -20,7 +20,7 @@ public class House : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.GetComponent<Player>())
+        if (collision.TryGetComponent(out Player _))
         {
             _alarm.Off();
         }

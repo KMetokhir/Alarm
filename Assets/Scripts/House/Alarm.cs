@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
@@ -7,31 +8,20 @@ public class Alarm : MonoBehaviour
     private const float MinSoundValue = 0f;
 
     [SerializeField] private float _volumeChangeRate = 0.1f;
+    [SerializeField] private float _waitingInterval = 0.1f;
+
+    private Coroutine _volumeChangeCoroutine;
+    private bool _isCoroutineRuning = false;
 
     private AudioSource _audioSource;
-    private bool _isWorking = false;  
+    private bool _isWorking = false;
+    private float _targetSoundValue;
 
     private void Awake()
     {
         _audioSource = GetComponent<AudioSource>();
+        _audioSource.volume = MinSoundValue;
         _audioSource.loop = true;
-    }
-
-    private void Update()
-    {
-        if (_isWorking)
-        {
-            SmoothVolumeChange(MaxSoundValue);
-        }
-        else if (_audioSource.isPlaying)
-        {
-            SmoothVolumeChange(MinSoundValue);
-
-            if(_audioSource.volume == 0)
-            {
-                _audioSource.Stop();
-            }
-        }
     }
 
     public void On()
@@ -41,22 +31,67 @@ public class Alarm : MonoBehaviour
             return;
         }
 
-        if (_audioSource.isPlaying == false)
-        {
-            _audioSource.volume = MinSoundValue;
-            _audioSource.Play();
-        }        
+        _isWorking = true;
+        _targetSoundValue = MaxSoundValue;
 
-        _isWorking = true;          
+        if (_volumeChangeCoroutine == null)
+        {
+            _audioSource.Play();
+            _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+        }
+        else
+        {
+            if (_isCoroutineRuning == false)
+            {
+                _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+            }
+        }
     }
 
     public void Off()
-    {        
+    {
+        if (_isWorking == false)
+        {
+            return;
+        }
+
         _isWorking = false;
+        _targetSoundValue = MinSoundValue;
+
+        if (_volumeChangeCoroutine == null)
+        {
+            _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+        }
+        else
+        {
+            if (_isCoroutineRuning == false)
+            {
+                _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+            }
+        }
     }
 
-    private void SmoothVolumeChange(float targetValue)
+    private void AudioSourceStop()
     {
-        _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, targetValue, _volumeChangeRate * Time.deltaTime);        
+        if (_audioSource.volume == MinSoundValue)
+        {
+            _audioSource.Stop();
+        }
+    }
+
+    private IEnumerator VolumeChange()
+    {
+        WaitForSeconds waitingTime = new WaitForSeconds(_waitingInterval);
+        _isCoroutineRuning = true;
+
+        while (_audioSource.volume != _targetSoundValue)
+        {
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _targetSoundValue, _volumeChangeRate);
+
+            yield return waitingTime;
+        }
+
+        AudioSourceStop();
+        _isCoroutineRuning = false;
     }
 }
