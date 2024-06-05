@@ -24,6 +24,11 @@ public class Alarm : MonoBehaviour
 
     public void Activate()
     {
+        if (_targetSoundValue == MaxSoundValue)
+        {
+            return;
+        }
+
         _targetSoundValue = MaxSoundValue;
 
         if (TryStartNewCoroutine())
@@ -34,6 +39,11 @@ public class Alarm : MonoBehaviour
 
     public void Deactivate()
     {
+        if(_targetSoundValue == MinSoundValue)
+        {
+            return;
+        }
+
         _targetSoundValue = MinSoundValue;
 
         TryStartNewCoroutine();
