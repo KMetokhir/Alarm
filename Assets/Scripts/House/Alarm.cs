@@ -24,7 +24,7 @@ public class Alarm : MonoBehaviour
         _audioSource.loop = true;
     }
 
-    public void On()
+    public void Activate()
     {
         if (_isWorking)
         {
@@ -34,21 +34,13 @@ public class Alarm : MonoBehaviour
         _isWorking = true;
         _targetSoundValue = MaxSoundValue;
 
-        if (_volumeChangeCoroutine == null)
+        if (TryStartNewCoroutine())
         {
             _audioSource.Play();
-            _volumeChangeCoroutine = StartCoroutine(VolumeChange());
-        }
-        else
-        {
-            if (_isCoroutineRuning == false)
-            {
-                _volumeChangeCoroutine = StartCoroutine(VolumeChange());
-            }
         }
     }
 
-    public void Off()
+    public void Deactivate()
     {
         if (_isWorking == false)
         {
@@ -58,17 +50,28 @@ public class Alarm : MonoBehaviour
         _isWorking = false;
         _targetSoundValue = MinSoundValue;
 
+        TryStartNewCoroutine();
+    }
+
+    private bool TryStartNewCoroutine()
+    {
+        bool isSuccess = false;
+
         if (_volumeChangeCoroutine == null)
         {
             _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+            isSuccess = true;
         }
         else
         {
             if (_isCoroutineRuning == false)
             {
                 _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+                isSuccess = true;
             }
         }
+
+        return isSuccess;
     }
 
     private void AudioSourceStop()

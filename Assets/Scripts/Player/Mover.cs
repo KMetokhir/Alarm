@@ -77,7 +77,7 @@ public class Mover : MonoBehaviour
         }
         else if (_rigidbody.velocity.y == 0)
         {
-            if (_isMoving == true)
+            if (_isMoving)
             {
                 _isMoving = false;
                 StopedMoving?.Invoke();

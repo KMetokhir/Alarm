@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     private const string HorizontalAxis = "Horizontal";
 
     private Mover _mover;
-    private PlayerView _view;   
+    private PlayerView _view;
 
     private void Awake()
     {
@@ -32,7 +32,6 @@ public class Player : MonoBehaviour
         _mover.StartsMoving -= OnStartsMoving;
         _mover.StopedMoving -= OnStopedMoving;
         _mover.GroundStatusChanged -= OnGroundStatusChanged;
-
     }
 
     private void Update()
