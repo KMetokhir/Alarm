@@ -45,7 +45,7 @@ public class Alarm : MonoBehaviour
 
         if (_volumeChangeCoroutine == null)
         {
-            _volumeChangeCoroutine = StartCoroutine(VolumeChange());
+            _volumeChangeCoroutine = StartCoroutine(ChangeVolume());
             isSuccess = true;
         }
 
@@ -60,7 +60,7 @@ public class Alarm : MonoBehaviour
         }
     }
 
-    private IEnumerator VolumeChange()
+    private IEnumerator ChangeVolume()
     {
         WaitForSeconds waitingTime = new WaitForSeconds(_waitingInterval);
 
