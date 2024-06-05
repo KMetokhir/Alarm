@@ -11,10 +11,8 @@ public class Alarm : MonoBehaviour
     [SerializeField] private float _waitingInterval = 0.1f;
 
     private Coroutine _volumeChangeCoroutine;
-    private bool _isCoroutineRuning = false;
 
     private AudioSource _audioSource;
-    private bool _isWorking = false;
     private float _targetSoundValue;
 
     private void Awake()
@@ -26,12 +24,6 @@ public class Alarm : MonoBehaviour
 
     public void Activate()
     {
-        if (_isWorking)
-        {
-            return;
-        }
-
-        _isWorking = true;
         _targetSoundValue = MaxSoundValue;
 
         if (TryStartNewCoroutine())
@@ -42,12 +34,6 @@ public class Alarm : MonoBehaviour
 
     public void Deactivate()
     {
-        if (_isWorking == false)
-        {
-            return;
-        }
-
-        _isWorking = false;
         _targetSoundValue = MinSoundValue;
 
         TryStartNewCoroutine();
@@ -62,19 +48,11 @@ public class Alarm : MonoBehaviour
             _volumeChangeCoroutine = StartCoroutine(VolumeChange());
             isSuccess = true;
         }
-        else
-        {
-            if (_isCoroutineRuning == false)
-            {
-                _volumeChangeCoroutine = StartCoroutine(VolumeChange());
-                isSuccess = true;
-            }
-        }
 
         return isSuccess;
     }
 
-    private void AudioSourceStop()
+    private void StopAudio()
     {
         if (_audioSource.volume == MinSoundValue)
         {
@@ -85,7 +63,6 @@ public class Alarm : MonoBehaviour
     private IEnumerator VolumeChange()
     {
         WaitForSeconds waitingTime = new WaitForSeconds(_waitingInterval);
-        _isCoroutineRuning = true;
 
         while (_audioSource.volume != _targetSoundValue)
         {
@@ -94,7 +71,7 @@ public class Alarm : MonoBehaviour
             yield return waitingTime;
         }
 
-        AudioSourceStop();
-        _isCoroutineRuning = false;
+        StopAudio();
+        _volumeChangeCoroutine = null;
     }
 }
